@@ -1,0 +1,10 @@
+{
+  "sbert_base_model": "sentence-transformers/all-mpnet-base-v2",
+  "fallback_model": "roberta-base",
+  "max_seq_length": 128,
+  "batch_size": 32,
+  "epochs": 4,
+  "learning_rate": 2e-5,
+  "warmup_ratio": 0.1,
+  "use_fp16": true
+}

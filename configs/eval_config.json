@@ -1,0 +1,9 @@
+{
+  "metrics": ["mrr@10", "ndcg@10", "recall@100"],
+  "batch_size": 64,
+  "domains": ["general", "finance", "medical"],
+  "stress_test": {
+    "max_qps": 5000,
+    "duration": 60
+  }
+}

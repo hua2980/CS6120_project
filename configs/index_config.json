@@ -1,0 +1,16 @@
+{
+  "index_type": "HNSW",
+  "hnsw_params": {
+    "M": 16,
+    "efConstruction": 64,
+    "efSearch": 128
+  },
+  "ivf_pq_params": {
+    "nlist": 100,
+    "m": 16,
+    "nbits": 8,
+    "nprobe": 10
+  },
+  "use_gpu": true,
+  "use_fp16": true
+}
