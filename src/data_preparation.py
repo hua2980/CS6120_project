@@ -107,10 +107,10 @@ def main():
         # Load MSMARCO from HuggingFace
         print("Loading MSMARCO from HuggingFace")
         try:
-            # 尝试加载HuggingFace数据集
+            # Load MSMARCO dataset from HuggingFace
             msmarco_dataset = load_dataset("microsoft/ms_marco", "v1.1")
             
-            # 提取文档数据并转换为DataFrame
+            # Extract relevant fields
             docs = []
             for doc in tqdm(msmarco_dataset['train'], desc="Processing MSMARCO documents"):
                 if 'passages' in doc and 'passage_text' in doc['passages'] and len(doc['passages']['passage_text']) > 0:
@@ -128,7 +128,7 @@ def main():
             print(f"Error loading MSMARCO from HuggingFace: {str(e)}")
             print("Falling back to local file if available...")
             
-            # 尝试从本地加载
+            # Load MSMARCO from local file
             msmarco_path = RAW_DIR / "msmarco.tsv"
             if msmarco_path.exists():
                 print(f"Loading MSMARCO from local file: {msmarco_path}")
