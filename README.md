@@ -1,6 +1,6 @@
 # Enhanced Social Media Short Text Retrieval System
 
-**Last Updated**: March 17, 2025
+**Last Updated**: March 25, 2025
 
 ## Project Overview
 
@@ -70,16 +70,16 @@ CS6120_project/
 |-------|--------|------------|-------|
 | Project Planning | ✅ Completed | 100% | Completed project proposal and technical route planning |
 | Environment Setup | ✅ Completed | 100% | Created project structure and configuration files |
-| Data Preparation | 🔄 In Progress | 0% | Plan to download and process MSMARCO and STS datasets |
-| Model Development | 📅 Not Started | 0% | Plan to start after data preparation |
+| Data Preparation | ✅ Completed | 100% | Successfully downloaded and processed MSMARCO and Twitter datasets |
+| Model Development | 🔄 In Progress | 0% | Starting SBERT fine-tuning with processed data |
 | System Integration | 📅 Not Started | 0% | Plan to start after model development |
 | Evaluation & Optimization | 📅 Not Started | 0% | Plan to start after system integration |
 
 ### Upcoming Tasks
 
-- [ ] Download MSMARCO and STS Benchmark datasets
-- [ ] Implement social media text cleaning functionality
-- [ ] Process and prepare training data
+- [x] Download MSMARCO and Twitter datasets
+- [x] Implement social media text cleaning functionality
+- [x] Process and prepare training data
 - [ ] Start SBERT model fine-tuning
 
 ## Implementation Roadmap
