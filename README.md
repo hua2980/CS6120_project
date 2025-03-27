@@ -1,6 +1,6 @@
 # Enhanced Social Media Short Text Retrieval System
 
-**Last Updated**: March 17, 2025
+**Last Updated**: March 25, 2025
 
 ## Project Overview
 
@@ -68,18 +68,18 @@ CS6120_project/
 
 | Phase | Status | Completion | Notes |
 |-------|--------|------------|-------|
-| Project Planning | ✅ Completed | 100% | Completed project proposal and technical route planning |
-| Environment Setup | ✅ Completed | 100% | Created project structure and configuration files |
-| Data Preparation | 🔄 In Progress | 0% | Plan to download and process MSMARCO and STS datasets |
-| Model Development | 📅 Not Started | 0% | Plan to start after data preparation |
-| System Integration | 📅 Not Started | 0% | Plan to start after model development |
-| Evaluation & Optimization | 📅 Not Started | 0% | Plan to start after system integration |
+| Project Planning | ✅ Completed | 100% | Project proposal and technical roadmap finalized |
+| Environment Setup | ✅ Completed | 100% | Project scaffolding and config files created |
+| Data Preparation | ✅ Completed | 100% | MSMARCO & Twitter datasets processed |
+| Model Development | 🔄 In Progress | 30% | SBERT fine-tuning in progress |
+| System Integration | 📅 Not Started | 0% | FAISS integration pending |
+| Evaluation & Optimization | 📅 Not Started | 0% | Benchmarking framework ready |
 
 ### Upcoming Tasks
 
-- [ ] Download MSMARCO and STS Benchmark datasets
-- [ ] Implement social media text cleaning functionality
-- [ ] Process and prepare training data
+- [x] Download MSMARCO and Twitter datasets
+- [x] Implement social media text cleaning functionality
+- [x] Process and prepare training data
 - [ ] Start SBERT model fine-tuning
 
 ## Implementation Roadmap
@@ -114,13 +114,44 @@ PROJECT_PATH = "/content/drive/MyDrive/CS6120_project"
 ### Data Preparation
 
 ```python
-# Download and process MSMARCO dataset
-!wget -q https://msmarco.blob.core.windows.net/msmarcoranking/collection.tar.gz -O {PROJECT_PATH}/data/raw/collection.tar.gz
-!wget -q https://msmarco.blob.core.windows.net/msmarcoranking/queries.tar.gz -O {PROJECT_PATH}/data/raw/queries.tar.gz
-!wget -q https://msmarco.blob.core.windows.net/msmarcoranking/qrels.dev.small.tsv -O {PROJECT_PATH}/data/raw/qrels.dev.small.tsv
+from src.data_preparation import DataPreprocessor
+from pathlib import Path
 
-# Download STS Benchmark dataset
-!wget -q http://ixa2.si.ehu.es/stswiki/images/4/48/Stsbenchmark.tar.gz -O {PROJECT_PATH}/data/raw/stsbenchmark.tar.gz
+# Initialize preprocessor
+preprocessor = DataPreprocessor()
+
+# Process MSMARCO dataset (auto-load from HuggingFace)
+msmarco_output = preprocessor.process_msmarco()  # Returns Path object
+
+# Process Twitter dataset (auto-download & extract)
+twitter_output = preprocessor.process_twitter(
+    Path("data/raw/twitter.zip")
+)
+
+# Generate combined dataset
+combined_path = Path("data/processed/combined.json")
+print(f"Combined dataset saved to: {combined_path}")
+
+# Display samples
+print("\nSample processed data:")
+with open(combined_path) as f:
+    sample_data = json.load(f)
+    print(f"- Training samples: {len(sample_data['train'])}")
+    print(f"- Validation samples: {len(sample_data['val'])}")
+    print(f"- Test samples: {len(sample_data['test'])}")
+    print("- Example text:", sample_data['train'][0][:50] + "...")
+```
+
+**Time Complexity Analysis**:
+- Twitter text cleaning: O(n) using regex pipeline
+- Dataset splitting: O(n log n) with sklearn's train_test_split
+- Memory optimization: Using generators for large files (chunk_size=8192)
+
+**Tensor Shape Transformation**:
+```
+Raw text: (batch_size,) 
+Cleaned text: (batch_size,) 
+Embeddings: (batch_size, 768)  # SBERT output dimension
 ```
 
 ## Risk Management
@@ -128,7 +159,7 @@ PROJECT_PATH = "/content/drive/MyDrive/CS6120_project"
 | Module | Risk | Mitigation Strategy |
 |--------|------|---------------------|
 | Semantic Encoding | Domain drift (e.g., internet slang) | Fine-tune SBERT using Twitter dataset |
-| Hybrid Ranking | Low parameter tuning efficiency | Use Bayesian optimization instead of grid search (saves 40% time) |
+| Hybrid Ranking | Low parameter tuning efficiency | Bayesian optimization replaces grid search (40% time saving) |
 | Deployment | Cold start latency | Implement container pre-warming on GPU instances |
 
 ## References

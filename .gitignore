@@ -1,0 +1,116 @@
+# IDE and editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Data files
+data/raw/
+data/embeddings/
+data/processed/*.json
+data/processed/*.npy
+data/processed/*.pkl
+!data/processed/.gitkeep
+!data/embeddings/.gitkeep
+
+# Model files
+models/
+*.bin
+*.pt
+*.pth
+*.onnx
+*.faiss
+*.index
+!models/fallback/.gitkeep
+!models/ranker/.gitkeep
+!models/sbert_model/.gitkeep
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Byte-compiled / optimized files
+*.so
+*.pyd
+
+# C extensions
+*.so
+
+# PyInstaller
+*.manifest
+*.spec
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
