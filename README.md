@@ -1,7 +1,4 @@
 # Enhanced Social Media Short Text Retrieval System
-
-**Last Updated**: March 25, 2025
-
 ## Project Overview
 
 This project aims to build an efficient social media short text retrieval system using a hybrid architecture combining SBERT and BM25, and leveraging GPU-accelerated FAISS HNSW indexing to achieve ultra-low latency (0.02ms) and high throughput (1,000 QPS).
