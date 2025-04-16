@@ -114,3 +114,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Project specific exclusions
+/.clinerules
+/Research Report - Strucute and Rubric.pdf
