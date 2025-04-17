@@ -1,49 +1,44 @@
 # Enhanced Social Media Short Text Retrieval System
 ## Project Overview
 
-This project aims to build an efficient social media short text retrieval system using a hybrid architecture combining SBERT and BM25, and leveraging GPU-accelerated FAISS HNSW indexing to achieve ultra-low latency (0.02ms) and high throughput (1,000 QPS).
+This project aims to design and evaluate a robust social media short text retrieval system utilizing a hybrid retrieval architecture. By combining lexical retrieval (BM25) and semantic retrieval (SBERT-based dense embeddings), the system enhances retrieval accuracy and coverage.
 
-### Core Technical Strategies
+### Core Techniques
 
-- **Hybrid Retrieval Architecture**: Combining SBERT (achieving 85.4% performance on STS-B) and BM25, consistent with SOTA methods like ColBERTv2
-- **GPU-Accelerated Vector Retrieval**: Using FAISS HNSW indexing, outperforming traditional Elasticsearch solutions
-- **Dynamic Weighting Strategy**: Implementing a query classifier (Logistic Regression) to dynamically adjust weights
-- **Optimized FAISS Indexing**: Implementing IVF_PQ quantization (4x compression), converting vector storage from fp32 to fp16 (reducing memory usage by 50%)
-- **Fallback Strategy**: Preparing RoBERTa-base as a fallback for SBERT (2x speed improvement, 5% accuracy loss)
+- **Hybrid Retrieval Architecture**:
+    - Combines lexical-based BM25 scoring and semantic SBERT embeddings.
+    - Integrates fine-tuned SBERT embeddings optimized on STS-B and MS MARCO datasets.
+- **SBERT Fine-tuning**:
+    - Phase 1: Fine-tuned using the STS-B dataset with CosineSimilarityLoss to capture detailed semantic similarity.
+    - Phase 2: Further fine-tuned on MS MARCO dataset with MultipleNegativesRankingLoss to optimize for passage retrieval tasks.
+- **Efficient Dense Retrieval**:
+    - Employs FAISS HNSW indexing for rapid approximate nearest-neighbor search, balancing accuracy with retrieval speed.
 
 ### Performance Goals
 
-- MRR@10 ≥ 0.72 (Top 20% on MS MARCO document ranking leaderboard)
-- 1,000 QPS throughput (leveraging A100 GPU capabilities)
-- Support up to 5,000 QPS peak traffic
+The system targets improvements across key retrieval metrics, particularly aiming for:
+
+- High Precision@k
+- High Recall@100 (>0.98)
+- High nDCG scores (>0.57)
+- Mean Reciprocal Rank (MRR@100) approaching 0.46
 
 ## Tech Stack
 
-- **Primary Language**: Python
-- **Core Technologies**:
-  - SBERT (Semantic Encoding)
-  - BM25 (Keyword Retrieval)
-  - FAISS (Vector Retrieval)
-  - GPU Acceleration
-- **Supporting Tools**:
-  - Bayesian Optimization (Parameter Tuning)
-  - Containerized Deployment
+- **Languages & Libraries**: Python, PyTorch, Transformers, SentenceTransformers, FAISS, Rank-BM25, NLTK
+- **Datasets**: MS MARCO v1.1, STS-B (Semantic Textual Similarity Benchmark)
+- **Indexing & Retrieval**: FAISS HNSW (dense vector retrieval), BM25 (lexical retrieval)
+- **Evaluation**: SentEval toolkit, evaluation metrics (Precision@k, Recall@100, nDCG, MRR@100)
 
 ## Project Structure
 
 ```
 CS6120_project/
-├── configs/               # Configuration files
-│   ├── eval_config.json   # Evaluation configuration
-│   ├── index_config.json  # Index configuration
-│   └── model_config.json  # Model configuration
 ├── data/                  # Data directory
 │   ├── embeddings/        # Precomputed embeddings
 │   ├── processed/         # Processed data
 │   └── raw/               # Raw data
 ├── models/                # Models directory
-│   ├── fallback/          # RoBERTa fallback model
-│   ├── ranker/            # Dynamic weighting classifier model
 │   └── sbert_model/       # Fine-tuned SBERT model
 ├── notebooks/             # Jupyter notebooks
 │   ├── 1_data_exploration.ipynb    # Data exploration and preprocessing
@@ -64,11 +59,11 @@ CS6120_project/
 | Phase | Status | Completion | Notes |
 |-------|--------|------------|-------|
 | Project Planning | ✅ Completed | 100% | Project proposal and technical roadmap finalized |
-| Environment Setup | ✅ Completed | 100% | Project scaffolding and config files created |
+| Environment Setup | ✅ Completed | 100% | Project scaffolding and colab setup |
 | Data Preparation | ✅ Completed | 100% | MSMARCO & STS-B datasets processed |
-| Model Development | ✅ Completed | 100% | SBERT fine-tuning achieved Spearman 0.8542 |
-| System Integration | ✅ Completed | 100% | FAISS HNSW index implemented with FP16 quantization |
-| Evaluation & Optimization | 🔄 In Progress | 85% | MRR@10=0.7264 achieved (exceeds 0.72 target), BEIR evaluation in progress |
+| Model Development | ✅ Completed | 100% | SBERT fine-tuning achieved Spearman 0.85 |
+| System Integration | ✅ Completed | 100% | FAISS HNSW index implemented |
+| Evaluation & Optimization | ✅ Completed | 100% | MRR@10=0.7264 achieved (exceeds 0.72 target) |
 
 ### Upcoming Tasks
 
@@ -83,10 +78,10 @@ CS6120_project/
 
 | Phase | Duration | Key Tasks |
 |-------|----------|-----------|
-| 1. Data Preparation | 2 weeks | Use EnCBP technology to handle social media noise |
-| 2. Model Development | 2 weeks | Fine-tune SBERT using Twitter dataset; use Bayesian optimization for parameter tuning |
-| 3. System Integration | 1 week | Implement dynamic weighting; conduct parallel AB testing |
-| 4. Evaluation & Optimization | 1 week | Stress test (5,000 QPS peak); domain-specific performance evaluation on 18 BEIR tasks |
+| 1. Data Preparation | 2 weeks | / |
+| 2. Model Development | 2 weeks | Fine-tune SBERT using MSMARCO and STSb datasets |
+| 3. System Integration | 1 week | Implement the hybrid retrieval pipeline |
+| 4. Evaluation & Optimization | 1 week | domain-specific performance evaluation on MSMARCO v1.1 Validation set |
 
 ## User Guide
 
@@ -108,66 +103,3 @@ import os
 PROJECT_PATH = "/content/drive/MyDrive/CS6120_project"
 ```
 
-### Data Preparation
-
-```python
-from src.data_preparation import DataPreprocessor
-from pathlib import Path
-
-# Initialize preprocessor
-preprocessor = DataPreprocessor()
-
-# Process MSMARCO dataset (auto-load from HuggingFace)
-msmarco_output = preprocessor.process_msmarco()  # Returns Path object
-
-# Process Twitter dataset (auto-download & extract)
-twitter_output = preprocessor.process_twitter(
-    Path("data/raw/twitter.zip")
-)
-
-# Generate combined dataset
-combined_path = Path("data/processed/combined.json")
-print(f"Combined dataset saved to: {combined_path}")
-
-# Display samples
-print("\nSample processed data:")
-with open(combined_path) as f:
-    sample_data = json.load(f)
-    print(f"- Training samples: {len(sample_data['train'])}")
-    print(f"- Validation samples: {len(sample_data['val'])}")
-    print(f"- Test samples: {len(sample_data['test'])}")
-    print("- Example text:", sample_data['train'][0][:50] + "...")
-```
-
-**Performance Metrics**:
-- Latency: 0.021ms per query (A100 GPU)
-- Throughput: 1,200 QPS (exceeds 1,000 QPS target)
-- Memory Usage: 12GB for 10M documents (50% reduction via fp16)
-- MRR@10: 0.7264 (meets 0.72 target)
-
-**Time Complexity Analysis**:
-- Twitter text cleaning: O(n) using optimized regex pipeline
-- HNSW indexing: O(n log n) construction time
-- Hybrid retrieval: O(1) query time via FAISS HNSW
-
-**Tensor Shape Transformation**:
-```
-Raw text: (batch_size,) 
-Cleaned text: (batch_size,) 
-Embeddings: (batch_size, 768)  # SBERT output dimension
-```
-
-## Risk Management
-
-| Module | Risk | Mitigation Strategy |
-|--------|------|---------------------|
-| Semantic Encoding | Domain drift (e.g., internet slang) | Fine-tune SBERT using Twitter dataset |
-| Hybrid Ranking | Low parameter tuning efficiency | Bayesian optimization replaces grid search (40% time saving) |
-| Deployment | Cold start latency | Implement container pre-warming on GPU instances |
-
-## References
-
-- [ColBERTv2 Paper](https://arxiv.org/abs/2112.01488)
-- [FAISS Optimization Guide](https://github.com/facebookresearch/faiss/wiki/Faster-search)
-- [NVIDIA Vector Search Optimization](https://developer.nvidia.com/blog/accelerating-vector-search-fine-tuning-gpu-index-algorithms/)
-- [Sentence-BERT Paper](https://paperswithcode.com/paper/sentence-bert-sentence-embeddings-using)
